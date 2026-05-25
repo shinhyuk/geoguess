@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a14" />
+  <title>네온 러시 · 스피드 레이싱</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="stage">
+    <canvas id="game"></canvas>
+
+    <!-- HUD -->
+    <div id="hud">
+      <div class="hud-left">
+        <div class="speedo">
+          <span id="speed">0</span><span class="unit">km/h</span>
+        </div>
+        <div class="gear" id="gear">N</div>
+      </div>
+      <div class="hud-center">
+        <span id="time">90</span><span class="t-label">초</span>
+      </div>
+      <div class="hud-right">
+        <div class="stat"><span class="label">거리</span><span id="distance">0 m</span></div>
+        <div class="stat"><span class="label">최고기록</span><span id="best">0 m</span></div>
+      </div>
+    </div>
+
+    <!-- 컨트롤 -->
+    <div id="controls">
+      <button class="ctrl steer" id="btn-left" aria-label="왼쪽">◀</button>
+      <button class="ctrl brake" id="btn-brake" aria-label="브레이크">BRAKE</button>
+      <button class="ctrl steer" id="btn-right" aria-label="오른쪽">▶</button>
+    </div>
+
+    <!-- 시작 / 게임오버 오버레이 -->
+    <div id="overlay" class="overlay">
+      <div class="panel">
+        <h1 class="title">NEON<span>RUSH</span></h1>
+        <p id="overlay-msg" class="sub">초고속 하이웨이를 질주하세요</p>
+        <div id="overlay-score" class="oscore" hidden></div>
+        <button id="start" class="play">🏁 출발!</button>
+        <p class="hint">조작: 화면 좌·우 버튼으로 조향, 가운데 BRAKE · 키보드 ← → 와 ↓</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
