@@ -1,0 +1,319 @@
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface-2: #242836;
+  --text: #e9ecf2;
+  --muted: #9aa3b2;
+  --primary: #4f7cff;
+  --primary-d: #3a63e0;
+  --accent: #34d399;
+  --danger: #f87171;
+  --radius: 14px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+    "Malgun Gothic", Roboto, sans-serif;
+  overscroll-behavior: none;
+}
+
+body { overflow: hidden; }
+
+/* ---------- 화면 전환 ---------- */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+}
+.screen.active { display: flex; }
+
+/* ---------- 카드형 화면 (메뉴/키/결과) ---------- */
+#screen-key, #screen-menu, #screen-final {
+  align-items: center;
+  justify-content: center;
+  padding: calc(20px + var(--safe-t)) 18px calc(20px + var(--safe-b));
+  overflow-y: auto;
+}
+.card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface);
+  border: 1px solid #2a2f3d;
+  border-radius: 20px;
+  padding: 26px 22px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+.logo {
+  font-size: 28px;
+  margin: 0 0 6px;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.muted, .help { font-size: 14px; }
+#screen-menu .muted, #screen-key .muted { text-align: center; margin-top: 0; }
+
+/* ---------- 폼 요소 ---------- */
+.field { margin-top: 18px; }
+.field > label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+input[type="text"], select {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid #313749;
+  border-radius: var(--radius);
+  outline: none;
+  appearance: none;
+}
+input[type="text"]:focus, select:focus { border-color: var(--primary); }
+#key-input { margin: 16px 0 12px; }
+
+.seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.seg-btn {
+  padding: 14px 8px;
+  font-size: 15px;
+  border-radius: var(--radius);
+  border: 1px solid #313749;
+  background: var(--surface-2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: 0.15s;
+}
+.seg-btn.active {
+  border-color: var(--primary);
+  background: rgba(79, 124, 255, 0.16);
+  color: var(--text);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.check input { width: 20px; height: 20px; accent-color: var(--primary); }
+
+/* ---------- 버튼 ---------- */
+.btn {
+  width: 100%;
+  padding: 15px;
+  margin-top: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: 0.15s;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:active { background: var(--primary-d); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-text {
+  background: none;
+  color: var(--muted);
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.help { margin-top: 16px; color: var(--muted); }
+.help summary { cursor: pointer; }
+.help ol { padding-left: 18px; line-height: 1.6; }
+.help a { color: var(--primary); }
+.error { color: var(--danger); font-size: 14px; margin-top: 12px; }
+
+/* ---------- 게임 화면 ---------- */
+.pano { position: absolute; inset: 0; background: #000; }
+
+.hud {
+  position: absolute;
+  top: calc(10px + var(--safe-t));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 5;
+  pointer-events: none;
+}
+.hud-pill {
+  background: rgba(15, 17, 23, 0.82);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.recenter-btn {
+  position: absolute;
+  top: calc(56px + var(--safe-t));
+  left: 12px;
+  z-index: 5;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 17, 23, 0.82);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* ---------- 추측 패널 ---------- */
+.guess-panel {
+  position: absolute;
+  right: 12px;
+  bottom: calc(12px + var(--safe-b));
+  z-index: 6;
+  width: min(72vw, 320px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.guess-toggle {
+  display: none; /* 데스크톱에서는 숨김, 모바일에서만 표시 */
+  margin-bottom: 8px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+.guess-body {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid #2a2f3d;
+  border-radius: var(--radius);
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+.guess-map {
+  width: 100%;
+  height: 150px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #222;
+}
+.guess-confirm { margin-top: 8px; padding: 12px; }
+
+/* 접힘 상태: 지도 본체 숨김(레이아웃에서 제거) */
+.guess-panel.collapsed .guess-body { display: none; }
+
+/* 모바일: 토글 버튼 노출, 펼치면 지도를 크게 */
+@media (max-width: 819px), (pointer: coarse) {
+  .guess-toggle { display: block; }
+  .guess-panel:not(.collapsed) { width: min(94vw, 560px); }
+  .guess-panel:not(.collapsed) .guess-map { height: min(50vh, 400px); }
+}
+
+/* ---------- 로딩 ---------- */
+.loading {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(15, 17, 23, 0.92);
+  color: #fff;
+}
+.spinner {
+  width: 46px;
+  height: 46px;
+  border: 4px solid rgba(255, 255, 255, 0.18);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- 결과 화면 ---------- */
+.result-map { flex: 1; width: 100%; background: #222; }
+.result-sheet {
+  background: var(--surface);
+  border-top: 1px solid #2a2f3d;
+  padding: 18px 18px calc(18px + var(--safe-b));
+  border-radius: 18px 18px 0 0;
+}
+.result-stats {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+.stat-num { display: block; font-size: 28px; font-weight: 700; }
+.stat-label { font-size: 13px; color: var(--muted); }
+.score-bar {
+  margin: 16px 0 4px;
+  height: 10px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.score-bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+/* ---------- 최종 결과 ---------- */
+.final-total {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 800;
+  margin: 14px 0 4px;
+}
+.final-total .muted { font-size: 18px; font-weight: 500; }
+.final-grade {
+  text-align: center;
+  font-size: 18px;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.final-rounds { list-style: none; padding: 0; margin: 0 0 8px; }
+.final-rounds li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 4px;
+  border-bottom: 1px solid #262b38;
+  font-size: 15px;
+}
+.final-rounds li .pts { font-weight: 700; }
+
+/* ---------- 데스크톱: 추측 지도 항상 표시, 더 크게 ---------- */
+@media (min-width: 820px) and (pointer: fine) {
+  .guess-panel { width: 360px; }
+  .guess-panel .guess-map { height: 240px; transition: height 0.18s; }
+  .guess-panel:hover .guess-map { height: 340px; }
+}

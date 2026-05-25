@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>지오게스 · 스트리트뷰 추측 게임</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- API 키 입력 화면 -->
+  <section id="screen-key" class="screen active">
+    <div class="card">
+      <h1 class="logo">🌍 지오게스</h1>
+      <p class="muted">이 게임은 구글 지도(스트리트뷰) API 키가 필요합니다.</p>
+      <input id="key-input" type="text" inputmode="text" autocomplete="off" placeholder="Google Maps API 키 붙여넣기" />
+      <button id="key-save" class="btn btn-primary">시작하기</button>
+      <details class="help">
+        <summary>API 키는 어떻게 받나요?</summary>
+        <ol>
+          <li><a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud Console</a> 접속 후 프로젝트 생성</li>
+          <li><b>Maps JavaScript API</b>와 <b>Street View Static/Service</b>를 사용 설정</li>
+          <li>API 및 서비스 → 사용자 인증 정보 → <b>API 키</b> 생성</li>
+          <li>생성된 키를 위 입력란에 붙여넣기</li>
+        </ol>
+        <p class="muted small">키는 이 브라우저(localStorage)에만 저장되며 외부로 전송되지 않습니다.</p>
+      </details>
+      <p id="key-error" class="error" hidden></p>
+    </div>
+  </section>
+
+  <!-- 메인 메뉴 -->
+  <section id="screen-menu" class="screen">
+    <div class="card">
+      <h1 class="logo">🌍 지오게스</h1>
+      <p class="muted">스트리트뷰를 보고 어디인지 지도에서 맞혀보세요!</p>
+
+      <div class="field">
+        <label>게임 모드</label>
+        <div class="seg">
+          <button class="seg-btn active" data-mode="world">🌐 전세계 모드</button>
+          <button class="seg-btn" data-mode="country">📍 특정 국가 모드</button>
+        </div>
+      </div>
+
+      <div class="field" id="country-field" hidden>
+        <label for="country-select">국가 선택</label>
+        <select id="country-select"></select>
+      </div>
+
+      <div class="field">
+        <label for="rounds-select">라운드 수</label>
+        <select id="rounds-select">
+          <option value="3">3 라운드</option>
+          <option value="5" selected>5 라운드</option>
+          <option value="10">10 라운드</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="check">
+          <input type="checkbox" id="allow-move" checked />
+          <span>이동 허용 (화살표로 걸어다니기)</span>
+        </label>
+      </div>
+
+      <button id="start-game" class="btn btn-primary">게임 시작</button>
+      <button id="change-key" class="btn btn-text">API 키 변경</button>
+    </div>
+  </section>
+
+  <!-- 게임 화면 -->
+  <section id="screen-game" class="screen">
+    <div id="pano" class="pano"></div>
+
+    <div class="hud">
+      <div class="hud-pill" id="hud-round">라운드 1/5</div>
+      <div class="hud-pill" id="hud-mode">🌐 전세계</div>
+      <div class="hud-pill" id="hud-score">0 점</div>
+    </div>
+
+    <button id="recenter" class="recenter-btn" title="처음 위치로">⟲</button>
+
+    <!-- 추측 패널 -->
+    <div id="guess-panel" class="guess-panel">
+      <button id="guess-toggle" class="guess-toggle">🗺️ 지도 열기</button>
+      <div class="guess-body">
+        <div id="guess-map" class="guess-map"></div>
+        <button id="guess-confirm" class="btn btn-primary guess-confirm" disabled>여기로 추측!</button>
+      </div>
+    </div>
+
+    <!-- 로딩 오버레이 -->
+    <div id="loading" class="loading" hidden>
+      <div class="spinner"></div>
+      <p id="loading-text">장소를 찾는 중…</p>
+    </div>
+  </section>
+
+  <!-- 라운드 결과 -->
+  <section id="screen-result" class="screen">
+    <div id="result-map" class="result-map"></div>
+    <div class="result-sheet">
+      <div class="result-stats">
+        <div class="stat">
+          <span class="stat-num" id="result-points">0</span>
+          <span class="stat-label">점수</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" id="result-distance">0 km</span>
+          <span class="stat-label">오차 거리</span>
+        </div>
+      </div>
+      <div class="score-bar"><div id="score-bar-fill" class="score-bar-fill"></div></div>
+      <button id="next-round" class="btn btn-primary">다음 라운드</button>
+    </div>
+  </section>
+
+  <!-- 최종 결과 -->
+  <section id="screen-final" class="screen">
+    <div class="card">
+      <h1 class="logo">게임 종료 🎉</h1>
+      <div class="final-total">
+        <span id="final-score">0</span>
+        <span class="muted">/ <span id="final-max">25000</span> 점</span>
+      </div>
+      <div id="final-grade" class="final-grade"></div>
+      <ul id="final-rounds" class="final-rounds"></ul>
+      <button id="play-again" class="btn btn-primary">다시 하기</button>
+      <button id="back-menu" class="btn btn-text">메인 메뉴</button>
+    </div>
+  </section>
+
+  <script src="countries.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
